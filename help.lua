@@ -276,6 +276,9 @@ function what_is_this_uwu.get_node_tiles(node_name)
 		end
 		if #tiles == 1 and minetest.registered_nodes[node_name].drawtype == "plantlike" then
 			return tiles[1] .. '^[resize:16x16', 'craft_item', minetest.registered_nodes[node_name]
+		elseif minetest.registered_nodes[node_name].drawtype == "nodebox" and minetest.registered_nodes[node_name].node_box.type == "fixed" then
+			-- TODO: try to make a texture from the node_box and tiles?
+			return '', 'node', minetest.registered_nodes[node_name]
 		end
 		tiles[3] = tiles[3] or tiles[1]
 		tiles[6] = tiles[6] or tiles[3]
