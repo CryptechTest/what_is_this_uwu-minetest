@@ -3,13 +3,13 @@ local what_is_this_uwu = {
 	players_set = {}
 }
 
-local function split (str, sep)
+local function split(str, sep)
 	if sep == nil then
 		sep = "%s"
 	end
 
 	local t = {}
-	for char in string.gmatch(str, "([^"..sep.."]+)") do
+	for char in string.gmatch(str, "([^" .. sep .. "]+)") do
 		table.insert(t, char)
 	end
 
@@ -20,8 +20,8 @@ local char_width = {
 	A = 12,
 	B = 10,
 	C = 13,
-	D = 12, 
-	E = 11, 
+	D = 12,
+	E = 11,
 	F = 9,
 	G = 13,
 	H = 12,
@@ -46,8 +46,8 @@ local char_width = {
 	a = 10,
 	b = 8,
 	c = 8,
-	d = 9, 
-	e = 9, 
+	d = 9,
+	e = 9,
 	f = 5,
 	g = 9,
 	h = 9,
@@ -74,7 +74,7 @@ char_width[' '] = 5
 char_width['_'] = 9
 
 local function is_strange(str)
-	for char in str:gmatch'.' do
+	for char in str:gmatch '.' do
 		if char == '' then
 			return true
 		end
@@ -105,14 +105,14 @@ local function inventorycube(img1, img2, img3)
 	img2 = img2 or img1
 	img3 = img3 or img1
 
-	img1 = img1..'^[resize:16x16'
-	img2 = img2..'^[resize:16x16'
-	img3 = img3..'^[resize:16x16'
+	img1 = img1 .. '^[resize:16x16'
+	img2 = img2 .. '^[resize:16x16'
+	img3 = img3 .. '^[resize:16x16'
 
-	return "[inventorycube"..
-		"{"..img1:gsub("%^","&")..
-		"{"..img2:gsub("%^","&")..
-		"{"..img3:gsub("%^","&")
+	return "[inventorycube" ..
+		"{" .. img1:gsub("%^", "&") ..
+		"{" .. img2:gsub("%^", "&") ..
+		"{" .. img3:gsub("%^", "&")
 end
 
 local function serialize(val, name, skipnewlines, depth)
@@ -127,7 +127,7 @@ local function serialize(val, name, skipnewlines, depth)
 		tmp = tmp .. '{' .. (not skipnewlines and '\n' or '')
 
 		for k, v in pairs(val) do
-			tmp =  tmp .. serialize(v, k, skipnewlines, depth + 1) .. ',' .. (not skipnewlines and '\n' or '')
+			tmp = tmp .. serialize(v, k, skipnewlines, depth + 1) .. ',' .. (not skipnewlines and '\n' or '')
 		end
 
 		tmp = tmp .. string.rep(' ', depth) .. '}'
@@ -160,12 +160,12 @@ function what_is_this_uwu.destrange(str)
 		local reading = true
 		local is_special = false
 		local between_parenthesis = false
-		
-		for char in str:gmatch'.' do
+
+		for char in str:gmatch '.' do
 			if char == '' then
 				reading = false
 			elseif reading and not between_parenthesis then
-				temp_str = temp_str..char
+				temp_str = temp_str .. char
 			else
 				reading = true
 			end
@@ -181,16 +181,16 @@ function what_is_this_uwu.destrange(str)
 			end
 		end
 
-		return temp_str
+		return string.match(temp_str, "([^\n]*)\n") or temp_str
 	else
-		return str
+		return string.match(str, "([^\n]*)\n") or str
 	end
 end
 
 function what_is_this_uwu.register_player(player, name)
 	if not what_is_this_uwu.players_set[name] then
 		table.insert(what_is_this_uwu.players, player)
-		what_is_this_uwu.players_set[name] = true 
+		what_is_this_uwu.players_set[name] = true
 	end
 end
 
@@ -218,18 +218,18 @@ function what_is_this_uwu.get_pointed_thing(player)
 	player_pos = vector.add(player_pos, eye_offset)
 
 	-- set liquids vision
-	local see_liquid = 
+	local see_liquid =
 		minetest.registered_nodes[minetest.get_node(player_pos).name].drawtype ~= 'liquid'
 
 	-- get wielded item range 5 is engine default
 	-- order tool/item range >> hand_range >> fallback 5
-	local tool_range = player:get_wielded_item():get_definition().range or nil					
-	local hand_range	
-		for key, val in pairs(minetest.registered_items) do								
-			if key == "" then
-				hand_range = val.range or nil
-			end
+	local tool_range = player:get_wielded_item():get_definition().range or nil
+	local hand_range
+	for key, val in pairs(minetest.registered_items) do
+		if key == "" then
+			hand_range = val.range or nil
 		end
+	end
 	local wield_range = tool_range or hand_range or 5
 
 	-- determine ray end position
@@ -251,11 +251,11 @@ function what_is_this_uwu.get_node_tiles(node_name)
 	end
 
 	if node.groups['not_in_creative_inventory'] then
-		drop = node.drop
+		local drop = node.drop
 		if drop and type(drop) == 'string' then
 			node_name = drop
 			node = minetest.registered_nodes[drop]
-			if not node then 
+			if not node then
 				node = minetest.registered_craftitems[drop]
 			end
 		end
@@ -266,13 +266,12 @@ function what_is_this_uwu.get_node_tiles(node_name)
 	end
 
 	local tiles = node.tiles
-
 	local mod_name, item_name = what_is_this_uwu.split_item_name(node_name)
 
 	if node.inventory_image:sub(1, 14) == '[inventorycube' then
-		return node.inventory_image..'^[resize:146x146', 'node', minetest.registered_nodes[node_name]
+		return node.inventory_image .. '^[resize:146x146', 'node', minetest.registered_nodes[node_name]
 	elseif node.inventory_image ~= '' then
-		return node.inventory_image..'^[resize:16x16', 'craft_item', minetest.registered_nodes[node_name]
+		return node.inventory_image .. '^[resize:16x16', 'craft_item', minetest.registered_nodes[node_name]
 	else
 		if not tiles[1] then
 			return '', 'node', minetest.registered_nodes[node_name]
@@ -330,12 +329,12 @@ function what_is_this_uwu.show(player, meta, form_view, node_description, node_n
 	player:hud_change(
 		meta:get_string('wit:background_middle'),
 		'scale',
-		{x = size / 16 + 2, y = 2}
+		{ x = size / 16 + 2, y = 2 }
 	)
 	player:hud_change(
 		meta:get_string('wit:background_right'),
 		'offset',
-		{x = size, y = 35}
+		{ x = size, y = 35 }
 	)
 
 	player:hud_change(
