@@ -217,9 +217,11 @@ function what_is_this_uwu.get_pointed_thing(player)
 	player_pos.y = player_pos.y + eye_height
 	player_pos = vector.add(player_pos, eye_offset)
 
+	local node = minetest.registered_nodes[minetest.get_node(player_pos).name]
+
 	-- set liquids vision
 	local see_liquid =
-		minetest.registered_nodes[minetest.get_node(player_pos).name].drawtype ~= 'liquid'
+		node and node.drawtype ~= 'liquid'
 
 	-- get wielded item range 5 is engine default
 	-- order tool/item range >> hand_range >> fallback 5
